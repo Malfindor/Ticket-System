@@ -3,7 +3,7 @@ from datetime import date, timedelta
 import platform
 
 def readConfig(system):
-    config = ['127.0.0.1', 1433]
+    config = ['127.0.0.1', 1433, 'tickets', 'password']  # default values
     if system == "Windows":
         f = open(".\settings.conf", "r")
     elif system == "Linux":
@@ -16,14 +16,18 @@ def readConfig(system):
                 config.append(lineSplit[1].strip())
             elif lineSplit[0] == "server_port":
                 config.append(int(lineSplit[1].strip()))
+            elif lineSplit[0] == "username":
+                config.append(lineSplit[1].strip())
+            elif lineSplit[0] == "password":
+                config.append(lineSplit[1].strip())
     f.close()
     return config
 
 def connectDB():
     try:
         conn = mariadb.connect(
-            user="tickets",
-            password="password",
+            user=username,
+            password=password,
             host=server_ip,
             port=server_port,
             database="ticket-system"
@@ -44,6 +48,8 @@ else:
 config = readConfig(system) # returns as [server_ip, server_port]
 server_ip = config[0]
 server_port = config[1]
+username = config[2]
+password = config[3]
 
 conn = connectDB()
 cursor = conn.cursor()
